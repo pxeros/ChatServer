@@ -17,21 +17,56 @@ import java.util.*;
 public class ChatServer {
 	private int maxMessages;
 	private User[] users;
+	private CircularBuffer buffer;
 
 	public ChatServer(User[] users, int maxMessages) {
 		this.users = users;
 		this.maxMessages = maxMessages;
+		this.buffer = new CircularBuffer(this.maxMessages + 1);
 	}
+	// make Sure to add ad find out where to add the Timeout error and set the Session cookie of the user = 0
+	//  when it occurs.
 	public String addUser(String[] args){
+		SessionCookie n = new SessionCookie(1234567890);
+		if (this.users[0].equals(null)){
+			this.users[0] = new User("cs180", "root", n);
+		}
 		String validchars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890";
 		if (args[2].length() < 1 || args[2].length() > 20){
-			return null;
+			return MessageFactory.makeErrorMessage(22);
 		}
 		for (int i = 0; i < args[2].length(); i++){
-			if (validchars.indexOf(args[2].charAt(i)) == -1){
-				return null;
+			if (validchars.indexOf(args[2].charAt(i)) == -1) {
+				return MessageFactory.makeErrorMessage(22);
 			}
 		}
+		for (int i = 0; i < users.length; i++){
+			if (args[2].equals(users[i].getName())){
+				return MessageFactory.makeErrorMessage(22);
+			}
+		}
+		int position = 0;
+		while (users[position] != null){
+			position++;
+		}
+		users[position] = new User(args[3], args[2], n);
+		return "SUCCESS\r\n";
+	}
+	public String userLogin(String[] args){
+		int i = 0;
+		for (i = 0; i < users.length; i++){
+			if(args[1].equals(users[i].getName()) && users[i].checkPassword(args[2])){}
+			break;
+		}
+		if (i == users.length){
+			return MessageFactory.makeErrorMessage(21);
+		}
+		else if (users[i].getCookie() != null){
+			return MessageFactory.makeErrorMessage(115, "USER ALREADY LOGGED IN\r\n");
+		}
+		users[i].setCookie(new SessionCookie(784292749));
+		users[i].getCookie().updateTimeOfActivity();
+		return "SUCCESS\t0234\r\n";
 	}
 
 	/**
