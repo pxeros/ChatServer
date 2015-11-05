@@ -21,7 +21,7 @@ public class SessionCookie {
     }
 
     public boolean hasTimedOut() {
-        if (this.activitytime - System.currentTimeMillis() > this.activitytime) {
+        if (this.activitytime - System.currentTimeMillis() >= 300000) {
             return true;
         }
         return false;
