@@ -115,6 +115,60 @@ public class ChatServer {
 
 		in.close();
 	}
+	public String postMessage(String[] args, String name) {
+		if (args[2].length() < 1) { // does this take care of the intial white space infront
+
+			return ""; // WHAT TO DO HERE
+		}
+
+		else {
+			for (int i = 0; i < users.length; i++ ) {
+				// will loop through the user array to find the specific user that is posting
+				if (args[1].equals(users[i].getCookie())) {// finds matching cookie
+					users[i].getCookie().updateTimeOfActivity();//?????
+					String message = name + ": " + args[2];
+					return message;
+				}
+
+			}
+
+			// if the loop get here the user if not found *********
+
+		}
+		return ""; // WHAT DO HERE?????? IN EXCEPTION
+
+	}
+
+	public String getMessages(String[] args) {
+		if (args == null) {
+			// what DO HERE or NO
+		}
+
+		for (int i = 0; i < users.length; i ++ ) {
+			if (args[1].equals(users[i].getCookie())) { //matches cookie to user
+				if (!(Integer.parseInt(args[2]) >= 1)) { // checks if numMessages is >= 1
+
+					// HAVE TO THROW INVALID_VALUE_ERROR************
+				}
+
+				else {
+					String serverMessage = "";
+					String [] messages = buffer.getNewest(Integer.parseInt(args[2]));
+					serverMessage = "SUCCESS";
+					// receives the sets of messages from the buffer in an array
+					for (int j = 0; j < messages.length; j ++ ) {
+						if (j == messages.length - 1) { // handels for the last message in the array
+							serverMessage = serverMessage + "\r\n";
+							return serverMessage;
+						}
+
+						serverMessage = serverMessage + "\t" + messages[j];
+					}
+				}
+			}
+		}
+		return ""; // no sucess here ** IS THIS CORRECT HANDELING???
+	}
 
 	/**
 	 * Replaces "poorly formatted" escape characters with their proper values.
